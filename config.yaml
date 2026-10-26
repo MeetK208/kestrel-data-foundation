@@ -1,0 +1,647 @@
+# One root key per table (key = silver table name).
+# ddl_path / sql_transformation are FOLDERS; the file inside is <table>.sql.
+#
+# bronze_columns / silver_columns : every column of the table with its data type
+# ignore_columns      : skipped when comparing the live table with its DDL / column list
+# allow_extra_columns : true  -> a column in the live table but not in the DDL is OK
+#                       false -> it is reported as a mismatch
+
+pos_transactions:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true    
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        txn_id: VARCHAR
+        txn_line_no: SMALLINT
+        basket_id: VARCHAR
+        outlet_code: VARCHAR
+        channel: VARCHAR
+        sku_code: VARCHAR
+        event_ts: VARCHAR
+        qty: INTEGER
+        unit_price: DOUBLE
+        discount_amount: DOUBLE
+        tax_amount: DOUBLE
+        payment_mode: VARCHAR
+        till_id: SMALLINT
+        cashier_id: VARCHAR
+        promo_code: VARCHAR
+        source_file: VARCHAR
+        quantity_units: INTEGER
+        uom: VARCHAR
+        loyalty_id: VARCHAR
+        ingest_date: DATE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        txn_id: VARCHAR
+        txn_line_no: SMALLINT
+        basket_id: VARCHAR
+        outlet_code: VARCHAR
+        channel: VARCHAR
+        sku_code: VARCHAR
+        event_ts_utc: TIMESTAMP
+        event_ts_ist: TIMESTAMP
+        qty: INTEGER
+        uom: VARCHAR
+        uom_inferred: BOOLEAN
+        eaches_per_case: BIGINT
+        conversion_source: VARCHAR
+        qty_eaches: BIGINT
+        unit_price: DOUBLE
+        discount_amount: DOUBLE
+        tax_amount: DOUBLE
+        line_gross_amount: DOUBLE
+        line_net_amount: DOUBLE
+        payment_mode: VARCHAR
+        till_id: SMALLINT
+        cashier_id: VARCHAR
+        promo_code: VARCHAR
+        loyalty_id: VARCHAR
+        source_file: VARCHAR
+        ingest_date: DATE
+        ingest_lag_days: INTEGER
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+
+
+reefer_telemetry:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        device_id: VARCHAR
+        telemetry_vendor: VARCHAR
+        firmware_version: VARCHAR
+        vehicle_registration: VARCHAR
+        route_code: VARCHAR
+        warehouse_code: VARCHAR
+        gateway_id: VARCHAR
+        reading_ts: VARCHAR
+        temp_value: DOUBLE
+        temp_unit: VARCHAR
+        humidity_pct: DOUBLE
+        door_open_flag: TINYINT
+        gps_lat: DOUBLE
+        gps_lon: DOUBLE
+        battery_pct: DOUBLE
+        dt: DATE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        device_id: VARCHAR
+        telemetry_vendor: VARCHAR
+        firmware_version: VARCHAR
+        vehicle_registration: VARCHAR
+        route_code: VARCHAR
+        warehouse_code: VARCHAR
+        gateway_id: VARCHAR
+        reading_ts: TIMESTAMP
+        business_date: DATE
+        dt: DATE
+        clock_corrected: BOOLEAN
+        temp_value: DOUBLE
+        temp_unit: VARCHAR
+        temp_unit_inferred: BOOLEAN
+        humidity_pct: DOUBLE
+        door_open_flag: TINYINT
+        gps_lat: DOUBLE
+        gps_lon: DOUBLE
+        battery_pct: DOUBLE
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+wms_scan_events:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        scan_id: VARCHAR
+        warehouse_code: VARCHAR
+        event_type: VARCHAR
+        order_number: VARCHAR
+        sku_code: VARCHAR
+        batch_id: VARCHAR
+        qty_cases: SMALLINT
+        pallet_id: VARCHAR
+        dock_door: TINYINT
+        operator_id: VARCHAR
+        handheld_device: VARCHAR
+        event_ts: VARCHAR
+        dt: DATE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        scan_id: VARCHAR
+        warehouse_code: VARCHAR
+        event_type: VARCHAR
+        stage_seq: SMALLINT
+        order_number: VARCHAR
+        sku_code: VARCHAR
+        batch_id: VARCHAR
+        qty_cases: SMALLINT
+        pallet_id: VARCHAR
+        dock_door: TINYINT
+        operator_id: VARCHAR
+        handheld_device: VARCHAR
+        event_ts: TIMESTAMP
+        business_date: DATE
+        dt: DATE
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+erp_outlet_master:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        outlet_code: VARCHAR
+        __op: VARCHAR
+        __op_ts: VARCHAR
+        __seq: BIGINT
+        outlet_name: VARCHAR
+        channel: VARCHAR
+        outlet_format: VARCHAR
+        city: VARCHAR
+        route_code: VARCHAR
+        warehouse_code: VARCHAR
+        credit_limit: DOUBLE
+        credit_terms_days: BIGINT
+        gst_number: VARCHAR
+        status: VARCHAR
+        extract_date: DATE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        outlet_code: VARCHAR
+        outlet_name: VARCHAR
+        channel: VARCHAR
+        outlet_format: VARCHAR
+        city: VARCHAR
+        route_code: VARCHAR
+        warehouse_code: VARCHAR
+        credit_limit: DOUBLE
+        credit_terms_days: BIGINT
+        gst_number: VARCHAR
+        status: VARCHAR
+        is_deleted: BOOLEAN
+        last_op_ts: TIMESTAMP
+        last_seq: BIGINT
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+erp_product_master:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        sku_code: VARCHAR
+        __op: VARCHAR
+        __op_ts: VARCHAR
+        __seq: BIGINT
+        product_name: VARCHAR
+        category: VARCHAR
+        brand: VARCHAR
+        case_pack: BIGINT
+        mrp: DOUBLE
+        list_price: DOUBLE
+        gst_rate_pct: DOUBLE
+        shelf_life_days: BIGINT
+        is_chilled: BIGINT
+        status: VARCHAR
+        extract_date: DATE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        sku_code: VARCHAR
+        product_name: VARCHAR
+        category: VARCHAR
+        brand: VARCHAR
+        case_pack: BIGINT
+        mrp: DOUBLE
+        list_price: DOUBLE
+        gst_rate_pct: DOUBLE
+        shelf_life_days: BIGINT
+        is_chilled: BOOLEAN
+        status: VARCHAR
+        is_deleted: BOOLEAN
+        last_op_ts: TIMESTAMP
+        last_seq: BIGINT
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+erp_sales_order_header:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        order_number: VARCHAR
+        __op: VARCHAR
+        __op_ts: VARCHAR
+        __seq: BIGINT
+        outlet_code: VARCHAR
+        warehouse_code: VARCHAR
+        route_code: VARCHAR
+        order_date: VARCHAR
+        requested_delivery_date: VARCHAR
+        order_status: VARCHAR
+        line_count: SMALLINT
+        order_value_gross: DOUBLE
+        discount_amount: DOUBLE
+        tax_amount: DOUBLE
+        source_system: VARCHAR
+        extract_date: DATE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        order_number: VARCHAR
+        outlet_code: VARCHAR
+        warehouse_code: VARCHAR
+        route_code: VARCHAR
+        order_date: DATE
+        requested_delivery_date: DATE
+        order_status: VARCHAR
+        line_count: SMALLINT
+        order_value_gross: DOUBLE
+        freight_corrected: BOOLEAN
+        discount_amount: DOUBLE
+        tax_amount: DOUBLE
+        source_system: VARCHAR
+        is_deleted: BOOLEAN
+        last_op_ts: TIMESTAMP
+        last_seq: BIGINT
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+
+ref_uom_conversion:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        sku_code: VARCHAR
+        eaches_per_case: BIGINT
+        base_uom: VARCHAR
+        case_uom: VARCHAR
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        sku_code: VARCHAR
+        eaches_per_case: BIGINT
+        base_uom: VARCHAR
+        case_uom: VARCHAR
+        conversion_source: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+ref_warehouse_master:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        warehouse_code: VARCHAR
+        warehouse_name: VARCHAR
+        city: VARCHAR
+        region_name: VARCHAR
+        timezone: VARCHAR
+        chilled_capacity_pallets: BIGINT
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        warehouse_code: VARCHAR
+        warehouse_name: VARCHAR
+        city: VARCHAR
+        region_name: VARCHAR
+        timezone: VARCHAR
+        chilled_capacity_pallets: BIGINT
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+ref_carrier_master:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        carrier_id: VARCHAR
+        carrier_name: VARCHAR
+        mode: VARCHAR
+        sla_hours: BIGINT
+        rate_per_km: DOUBLE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        carrier_id: VARCHAR
+        carrier_name: VARCHAR
+        mode: VARCHAR
+        sla_hours: BIGINT
+        rate_per_km: DOUBLE
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+ref_fiscal_calendar:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        calendar_date: DATE
+        fiscal_year: VARCHAR
+        fiscal_quarter: VARCHAR
+        fiscal_month_no: BIGINT
+        iso_week: BIGINT
+        day_of_week: VARCHAR
+        is_weekend: BIGINT
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        calendar_date: DATE
+        fiscal_year: VARCHAR
+        fiscal_quarter: VARCHAR
+        fiscal_month_no: BIGINT
+        iso_week: BIGINT
+        day_of_week: VARCHAR
+        is_weekend: BOOLEAN
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+ 
+ref_legacy_finance_weekly:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        week_ending: DATE
+        channel: VARCHAR
+        gross_sales_inr: DOUBLE
+        units_sold: BIGINT
+        basket_count: BIGINT
+        prepared_by: VARCHAR
+        note: VARCHAR
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        week_ending: DATE
+        channel: VARCHAR
+        gross_sales_inr: DOUBLE
+        units_sold: BIGINT
+        basket_count: BIGINT
+        prepared_by: VARCHAR
+        note: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations
+
+erp_outlet_master_history:
+  schemas:
+    bronze_layer:
+      ignore_columns:
+        - _bronze_run_id
+        - _bronze_file
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/bronze_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/bronze_layer/transformations
+      bronze_columns:
+        outlet_code: VARCHAR
+        __op: VARCHAR
+        __op_ts: VARCHAR
+        __seq: BIGINT
+        outlet_name: VARCHAR
+        channel: VARCHAR
+        outlet_format: VARCHAR
+        city: VARCHAR
+        route_code: VARCHAR
+        warehouse_code: VARCHAR
+        credit_limit: DOUBLE
+        credit_terms_days: BIGINT
+        gst_number: VARCHAR
+        status: VARCHAR
+        extract_date: DATE
+        _bronze_run_id: VARCHAR
+        _bronze_file: VARCHAR
+        _bronze_loaded_at: TIMESTAMP
+    silver_layer:
+      ignore_columns:
+        - _silver_loaded_at
+        - _bronze_loaded_at
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/silver_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/silver_layer/transformations
+      silver_columns:
+        outlet_code: VARCHAR
+        version_no: INTEGER
+        valid_from: TIMESTAMP
+        valid_to: TIMESTAMP
+        is_current: BOOLEAN
+        is_deleted: BOOLEAN
+        outlet_name: VARCHAR
+        channel: VARCHAR
+        outlet_format: VARCHAR
+        city: VARCHAR
+        route_code: VARCHAR
+        warehouse_code: VARCHAR
+        credit_limit: DOUBLE
+        credit_terms_days: BIGINT
+        gst_number: VARCHAR
+        status: VARCHAR
+        source_seq: BIGINT
+        _bronze_loaded_at: TIMESTAMP
+        _silver_loaded_at: TIMESTAMP
+    gold_layer:                      # not validated yet, kept for later
+      ignore_columns: []
+      allow_extra_columns: true
+      ddl_path: kestrel-data-foundation/sqls/gold_layer/ddls
+      sql_transformation: kestrel-data-foundation/sqls/gold_layer/transformations

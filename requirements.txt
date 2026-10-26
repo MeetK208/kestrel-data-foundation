@@ -1,6 +1,5 @@
-duckdb
+duckdb>=1.4
+pyyaml
 pyarrow
 pandas
 numpy
-
-
