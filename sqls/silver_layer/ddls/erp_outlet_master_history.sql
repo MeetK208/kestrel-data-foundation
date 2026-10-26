@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS silver_layer.erp_outlet_master_history (
+    outlet_code        VARCHAR,
+    version_no         INTEGER,
+    valid_from         TIMESTAMP,
+    valid_to           TIMESTAMP,
+    is_current         BOOLEAN,
+    is_deleted         BOOLEAN,
+    outlet_name        VARCHAR,
+    channel            VARCHAR,
+    outlet_format      VARCHAR,
+    city               VARCHAR,
+    route_code         VARCHAR,
+    warehouse_code     VARCHAR,
+    credit_limit       DOUBLE,
+    credit_terms_days  BIGINT,
+    gst_number         VARCHAR,
+    status             VARCHAR,
+    source_seq         BIGINT,
+    _bronze_loaded_at  TIMESTAMP,
+    _silver_loaded_at  TIMESTAMP
+);
